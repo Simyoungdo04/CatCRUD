@@ -1,0 +1,13 @@
+package com.kh.controller;
+
+import com.kh.model.dto.CatDto;
+import com.kh.model.service.CatService;
+
+public class CatController {
+	private CatService sc = new CatService();
+	
+	public void createCat(CatDto cat) {
+		sc.createCat();
+	}
+	
+}

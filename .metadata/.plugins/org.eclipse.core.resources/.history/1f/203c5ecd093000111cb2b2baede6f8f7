@@ -1,0 +1,10 @@
+package com.kh.model.dto;
+
+public class CatDto {
+	private int catId;
+	private String name;
+	private String color;
+	private String weight;
+	private String personality;
+	private String birth;
+}

@@ -1,0 +1,11 @@
+package com.kh.controller;
+
+import com.kh.model.dto.CatDto;
+
+public class CatController {
+	
+	public void createCat(CatDto cat) {
+		
+	}
+	
+}

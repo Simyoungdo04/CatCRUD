@@ -1,0 +1,9 @@
+package com.kh.controller;
+
+public class CatController {
+	
+	public void createCat(String name, String color, double weight, String personality) {
+		
+	}
+	
+}

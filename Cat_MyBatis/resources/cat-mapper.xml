@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="catMapper">
+	
+	<insert id="saveCat" parameterType="cat">
+		INSERT
+		  INTO
+		  	   CAT
+		  	   (
+		  	   CAT_ID
+		  	 , CAT_NAME
+		  	 , CAT_GENDER
+		  	 , CAT_WEIGHT
+		  	   )
+		VALUES
+		 	   (
+		 	   SEQ_CAT.NEXTVAL
+		 	 , #{catName}
+		 	 , #{catGender}
+		 	 , #{catWeight}	 	   
+		 	   )
+	</insert>
+	
+	<sql id="selectCat">
+		SELECT
+			   CAT_ID
+			 , CAT_NAME
+			 , CAT_GENDER
+			 , CAT_WEIGHT
+			 , CAT_BIRTH
+			 , CAT_KEEPER_ID
+			 , NVL(CAT_KEEPER_NAME, '없음') catKeeperName
+		  FROM
+		  	   CAT
+		  LEFT
+		  JOIN
+		  	   CAT_KEEPER USING(CAT_KEEPER_ID)
+	</sql>
+	
+	<select id="findAll" resultType="cat">
+		<include refid="selectCat"/>
+		 ORDER
+		 	BY
+		 	   CAT_ID DESC
+	</select>
+	
+	<select id="findById" resultType="cat" parameterType="String">
+		<include refid="selectCat"/>
+		WHERE
+			  CAT_ID = #{catId}
+	</select>
+	
+	<select id="findByKeyword" resultType="cat" parameterType="String">
+		<include refid="selectCat"/>
+		WHERE
+			  CAT_NAME LIKE '%' || #{keyword} || '%'
+		ORDER
+		   BY
+		   	  CAT_ID DESC
+	</select>
+	
+	<update id="updateCat" >
+		UPDATE
+			   CAT
+	 	   SET
+	 	   	   CAT_NAME = #{catName}
+	 	   	 , CAT_WEIGHT = #{catWeight}
+	 	 WHERE
+	 	 	   CAT_ID = #{catId}
+	</update>
+	
+	<delete id="deleteCat">
+		DELETE
+		  FROM
+			   CAT
+		 WHERE
+		 	   CAT_ID = #{id}
+	</delete>
+	
+	<update id="setCatKeeper" parameterType="cat">
+		UPDATE
+			   CAT
+		   SET
+		   	   CAT_KEEPER_ID = #{catKeeperId}
+		 WHERE
+		 	   CAT_ID = #{catId}
+	</update>
+	
+</mapper>

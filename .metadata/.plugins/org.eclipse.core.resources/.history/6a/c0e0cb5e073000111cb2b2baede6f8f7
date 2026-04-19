@@ -1,7 +1,0 @@
-package com.kh.model.vo;
-
-public class Cat {
-	private int id;
-	private String name;
-	private String color;
-}

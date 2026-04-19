@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="catKeeperMapper">
+
+	<insert id="saveCatKeeper" parameterType="String">
+		INSERT
+	      INTO
+	      	   CAT_KEEPER
+	    VALUES
+	    	  	   (
+	    	  	   SEQ_CAT_KEEPER.NEXTVAL
+	    	  	 , #{catKeeperName}
+	    	  	   )
+	</insert>
+	
+	<select id="findAllCatKeeper" resultType="catKeeper">
+		SELECT
+			   CAT_KEEPER_ID
+			 , CAT_KEEPER_NAME
+			 , NVL(CAT_NAME, '없음') catName
+		  FROM
+		  	   CAT_KEEPER
+		  LEFT
+		  JOIN
+		  	   CAT USING(CAT_KEEPER_ID)
+		 ORDER
+		 	BY
+		 	   CAT_KEEPER_ID DESC
+	</select>
+	
+	<resultMap id="catKeeperResultMap" type="catKeeper">
+    		<id column="CAT_KEEPER_ID" property="catKeeperId"/>
+    		<result column="CAT_KEEPER_NAME" property="catKeeperName"/>
+    		<collection property="cats" ofType="cat">
+        		<id column="CAT_ID" property="catId"/>
+        		<result column="CAT_NAME" property="catName"/>
+    		</collection>
+	</resultMap>
+
+	<select id="findCatAndCatKeeper" parameterType="map" resultMap="catKeeperResultMap">
+    		SELECT
+     	       CAT_KEEPER_ID
+             , CAT_KEEPER_NAME
+             , CAT_ID
+             , CAT_NAME
+      	  FROM
+               CAT_KEEPER
+      	  LEFT
+       	  JOIN
+          	   CAT USING(CAT_KEEPER_ID)
+         WHERE
+    			<choose>
+        			<when test="condition == 'CAT_KEEPER_ID'">
+               CAT_KEEPER_ID = #{keyword}
+        			</when>
+        			<otherwise>
+            	   CAT_KEEPER_NAME LIKE '%' || #{keyword} || '%'
+        			</otherwise>
+    			</choose>
+</select>
+	
+</mapper>

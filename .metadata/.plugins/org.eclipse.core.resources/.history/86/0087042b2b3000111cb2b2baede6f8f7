@@ -1,9 +1,0 @@
-package com.kh.controller;
-
-public class CatController {
-	
-	public void createCat() {
-		
-	}
-	
-}

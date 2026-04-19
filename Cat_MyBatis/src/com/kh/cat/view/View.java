@@ -22,7 +22,7 @@ public class View {
 			System.out.println("1. 고양이 생성하기");
 			System.out.println("2. 고양이 전체조회");
 			System.out.println("3. 고양이 단일조회하기");
-			System.out.println("4. 고양이 이름 키워드 하기");
+			System.out.println("4. 고양이 이름 검색하기");
 			System.out.println("5. 고양이 정보 수정하기");
 			System.out.println("6. 집사 고르기");
 			System.out.println("7. 고양이 삭제하기");
@@ -62,8 +62,8 @@ public class View {
 			case "1" : saveCatKeeper(); break;
 			case "2" : findAllCatKeeper(); break;
 			case "3" : findCatAndCatKeeper(); break;
-			case "4" : break;
-			case "5" : break;
+			case "4" : updateCatKeeper(); break;
+			case "5" : deleteCatKeeper(); break;
 			case "0" : return;
 			default : System.out.println("없는 메뉴입니다.");
 			}
@@ -97,7 +97,7 @@ public class View {
 		}
 	}
 	
-	private void findAll() {
+	private List<Cat> findAll() {
 		List<Cat> cats = catController.findAll();
 		
 		if(cats.isEmpty()) {
@@ -111,6 +111,7 @@ public class View {
 			}
 			System.out.println("=====================================\n");
 		}
+		return cats;
 	}
 	
 	private void findById() {
@@ -195,6 +196,16 @@ public class View {
 	}
 	
 	private void setCatKeeper() {
+		List<CatKeeper> catKeepers = findAllCatKeeper();
+		if(catKeepers.isEmpty()) {
+			return;
+		}
+		
+		List<Cat> cats = findAll();
+		if(cats.isEmpty()) {
+			return;
+		}
+		
 		System.out.println("집사 선택 하기");
 		findAll();
 		System.out.print("집사를 배정할 고양이 ID 입력 > ");
@@ -206,6 +217,7 @@ public class View {
 		} finally {
 			sc.nextLine();
 		}
+		
 		findAllCatKeeper();
 		System.out.print("집사 ID 입력 > ");
 		int catKeeperId = 0;
@@ -262,7 +274,7 @@ public class View {
 		}
 	}
 	
-	private void findAllCatKeeper() {
+	private List<CatKeeper> findAllCatKeeper() {
 		List<CatKeeper> catKeepers = catKeeperController.findAllCatKeeper();
 		
 		if(catKeepers.isEmpty()) {
@@ -276,6 +288,7 @@ public class View {
 			}
 			System.out.println("=============================\n");
 		}
+		return catKeepers;
 	}
 	
 	private void findCatAndCatKeeper() {
@@ -287,6 +300,11 @@ public class View {
 		System.out.print("키워드 입력 > ");
 		String keyword = sc.nextLine();
 		
+		switch(condition) {
+		case "1" : condition = "CAT_KEEPER_ID"; break;
+		case "2" : condition = "CAT_KEEPER_NAME"; break;
+		}
+		
 		Map<String, String> args = new HashMap<String, String>();
 		args.put("condition", condition);
 		args.put("keyword", keyword);
@@ -294,39 +312,68 @@ public class View {
 		List<CatKeeper> catKeepers = catKeeperController.findCatAndCatKeeper(args);
 		
 		if(catKeepers.isEmpty()) {
+			System.out.println("condition: " + condition);
+			System.out.println("keyword: " + keyword);
 			System.out.println("검색 결과가 없습니다.");
 		} else {
 			for(CatKeeper catKeeper : catKeepers) {
 			    System.out.println("=============================");
-			    System.out.println("집사 ID: " + catKeeper.getCatKeeperId());
-			    System.out.println("집사 이름: " + catKeeper.getCatKeeperName());
-			    System.out.print("담당 고양이: ");
-			    if(catKeeper.getCats() == null || catKeeper.getCats().isEmpty()) {
+			    System.out.println("집사 ID : " + catKeeper.getCatKeeperId());
+			    System.out.println("집사 이름 : " + catKeeper.getCatKeeperName());
+			    System.out.print("고양이 : ");
+			    if(catKeeper.getCats().isEmpty()) {
 			        System.out.println("없음");
 			    } else {
 			        for(Cat cat : catKeeper.getCats()) {
-			            System.out.println("\n  - " + cat.getCatName());
+			            System.out.print(cat.getCatName() + " | ");
 			        }
 			    }
 			}
-			System.out.println("=============================\n");
+			System.out.println("\n=============================\n");
 		}
 	}
 	
+	private void updateCatKeeper() {
+		System.out.println("집사 정보 수정하기");
+		findAllCatKeeper();
+		System.out.print("수정할 집사 ID 입력 > ");
+		int id = 0;
+		try {
+			id = sc.nextInt();
+		} catch(InputMismatchException e) {
+			System.out.println("ID는 정수만 입력 가능합니다.");
+		} finally {
+			sc.nextLine();
+		}
+		System.out.print("집사 이름 입력 > ");
+		String name = sc.nextLine();
+		
+		CatKeeper catKeeper = new CatKeeper();
+		catKeeper.setCatKeeperId(id);
+		catKeeper.setCatKeeperName(name);
+		
+		int result = catKeeperController.updateCatKeeper(catKeeper);
+		
+		if(result > 0) {
+			System.out.println("수정 성공");
+		} else {
+			System.out.println("수정 실패");
+		}
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	private void deleteCatKeeper() {
+		System.out.println("집사 삭제하기");
+		findAllCatKeeper();
+		System.out.print("삭제할 집사 ID 입력 > ");
+		String id = sc.nextLine();
+		
+		int result = catKeeperController.deleteCatKeeper(id);
+		
+		if(result > 0) {
+			System.out.println("삭제 성공");
+		} else {
+			System.out.println("삭제 실패");
+		}
+	}
 	
 }

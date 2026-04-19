@@ -36,4 +36,24 @@ public class CatKeeperService {
 		return catKeepers;
 	}
 	
+	public int updateCatKeeper(CatKeeper catKeeper) {
+		SqlSession session = Template.getSqlSession();
+		int result = catKeeperDao.updateCatKeeper(session, catKeeper);
+		if(result > 0) {
+			session.commit();
+		}
+		session.close();
+		return result;
+	}
+
+	public int deleteCatKeeper(String id) {
+		SqlSession session = Template.getSqlSession();
+		int result = catKeeperDao.deleteCatKeeper(session, id);
+		if(result > 0) {
+			session.commit();
+		}
+		session.close();
+		return result;
+	}
+	
 }

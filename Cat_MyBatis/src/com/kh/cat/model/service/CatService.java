@@ -66,15 +66,12 @@ public class CatService {
 		SqlSession session = Template.getSqlSession();
 		Cat findCat = catDao.findById(session, String.valueOf(cat.getCatId()));
 		int result = 0;
-		
 		if(findCat.getCatKeeperId() != 0) {
 			session.close();
 			result = -1;
 			return result;
 		}
-		
 		result = catDao.setCatKeeper(session, cat);
-		
 		if(result > 0) {
 			session.commit();
 		} 

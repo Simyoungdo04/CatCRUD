@@ -21,4 +21,12 @@ public class CatKeeperController {
 		return catKeeperService.findCatAndCatKeeper(args);
 	}
 	
+	public int updateCatKeeper(CatKeeper catKeeper) {
+		return catKeeperService.updateCatKeeper(catKeeper);
+	}
+	
+	public int deleteCatKeeper(String id) {
+		return catKeeperService.deleteCatKeeper(id);
+	}
+	
 }

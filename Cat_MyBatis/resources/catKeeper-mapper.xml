@@ -15,21 +15,6 @@
 	    	  	   )
 	</insert>
 	
-	<select id="findAllCatKeeper" resultType="catKeeper">
-		SELECT
-			   CAT_KEEPER_ID
-			 , CAT_KEEPER_NAME
-			 , NVL(CAT_NAME, '없음') catName
-		  FROM
-		  	   CAT_KEEPER
-		  LEFT
-		  JOIN
-		  	   CAT USING(CAT_KEEPER_ID)
-		 ORDER
-		 	BY
-		 	   CAT_KEEPER_ID DESC
-	</select>
-	
 	<resultMap id="catKeeperResultMap" type="catKeeper">
     		<id column="CAT_KEEPER_ID" property="catKeeperId"/>
     		<result column="CAT_KEEPER_NAME" property="catKeeperName"/>
@@ -38,6 +23,22 @@
         		<result column="CAT_NAME" property="catName"/>
     		</collection>
 	</resultMap>
+
+	<select id="findAllCatKeeper" resultMap="catKeeperResultMap">
+	    SELECT
+           	   CAT_KEEPER_ID
+         	 , CAT_KEEPER_NAME
+         	 , CAT_ID
+         	 , NVL(CAT_NAME, '없음') CAT_NAME
+      	  FROM
+           	   CAT_KEEPER
+      	  LEFT
+      	  JOIN
+           	   CAT USING(CAT_KEEPER_ID)
+     	 ORDER
+        	BY
+           	   CAT_KEEPER_ID DESC
+	</select>
 
 	<select id="findCatAndCatKeeper" parameterType="map" resultMap="catKeeperResultMap">
     		SELECT
@@ -51,14 +52,31 @@
        	  JOIN
           	   CAT USING(CAT_KEEPER_ID)
          WHERE
-    			<choose>
-        			<when test="condition == 'CAT_KEEPER_ID'">
-               CAT_KEEPER_ID = #{keyword}
-        			</when>
+    		   <choose>
+        	   		<when test="condition == 'CAT_KEEPER_ID'">
+   			   CAT_KEEPER_ID = TO_NUMBER(#{keyword})
+			        </when>
         			<otherwise>
-            	   CAT_KEEPER_NAME LIKE '%' || #{keyword} || '%'
+               CAT_KEEPER_NAME LIKE '%' || #{keyword} || '%'
         			</otherwise>
-    			</choose>
-</select>
+    		   </choose>
+	</select>
+	
+	<update id="updateCatKeeper">
+		UPDATE
+			   CAT_KEEPER
+		   SET
+		   	   CAT_KEEPER_NAME = #{catKeeperName}
+		 WHERE
+		 	   CAT_KEEPER_ID = #{catKeeperId}
+	</update>
+	
+	<delete id="deleteCatKeeper">
+		DELETE
+		  FROM
+		  	   CAT_KEEPER
+		 WHERE
+		 	   CAT_KEEPER_ID = #{catKeeperId}
+	</delete>
 	
 </mapper>

@@ -21,4 +21,12 @@ public class CatKeeperDao {
 		return session.selectList("catKeeperMapper.findCatAndCatKeeper", args);
 	}
 	
+	public int updateCatKeeper(SqlSession session, CatKeeper catKeeper) {
+		return session.update("catKeeperMapper.updateCatKeeper", catKeeper);
+	}
+	
+	public int deleteCatKeeper(SqlSession session, String id) {
+		return session.delete("catKeeperMapper.deleteCatKeeper", id);
+	}
+	
 }
